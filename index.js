@@ -2,10 +2,13 @@
 import express from "express";
 import bodyParser from "body-parser";
 import axios from "axios";
+import dotenv from "dotenv";
 
 const app=express();
-const port=4000;
-const API_URL="http://localhost:3000";
+//dotenv.config({ path: `.env.${process.env.NODE_ENV}`});
+dotenv.config();
+const port=process.env.PORT;
+const API_URL=process.env.API_URL;
 
 app.use(express.static("public"));
 
