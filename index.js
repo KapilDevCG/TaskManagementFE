@@ -3,6 +3,7 @@ import express, { Router } from "express";
 import bodyParser from "body-parser";
 import axios from "axios";
 import dotenv from "dotenv";
+import ejs from "ejs";
 import serverless from "serverless-http";
 
 const app=express();
