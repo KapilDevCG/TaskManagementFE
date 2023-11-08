@@ -1,10 +1,12 @@
 
-import express from "express";
+import express, { Router } from "express";
 import bodyParser from "body-parser";
 import axios from "axios";
 import dotenv from "dotenv";
+import serverless from "serverless-http";
 
 const app=express();
+const router=Router();
 //dotenv.config({ path: `.env.${process.env.NODE_ENV}`});
 dotenv.config();
 const port=process.env.PORT;
@@ -16,7 +18,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 
 //initial content
-app.get("/", async (req, res)=>{
+router.get("/", async (req, res)=>{
     try{
     const result = await axios.get(API_URL);
     res.render("index.ejs", {
@@ -30,7 +32,7 @@ app.get("/", async (req, res)=>{
 });
 
 //Get by id
-app.get("/api/posts/complete/:id", async (req,res)=>{
+router.get("/api/posts/complete/:id", async (req,res)=>{
     const newBody={completed: true};
     try{
     const result= await axios.patch(API_URL+"/tasks/"+req.params.id, newBody);
@@ -44,12 +46,12 @@ app.get("/api/posts/complete/:id", async (req,res)=>{
 });
 
 //Add Page
-app.get("/new", (req, res) => {
+router.get("/new", (req, res) => {
     res.render("modify.ejs", { heading: "New Task", submit: "Create Task" });
   });
 
   //Delete
-app.get("/api/posts/delete/:id", async (req, res)=>{
+router.get("/api/posts/delete/:id", async (req, res)=>{
     try{
     const result= await axios.delete(API_URL+"/tasks/"+req.params.id);
     console.log(result.data);
@@ -60,7 +62,7 @@ app.get("/api/posts/delete/:id", async (req, res)=>{
 });
 
 //update using patch
-app.get("/edit/:id", async (req, res)=>{
+router.get("/edit/:id", async (req, res)=>{
 
     try{
     const result= await axios.get(API_URL+"/tasks/"+req.params.id);
@@ -78,7 +80,7 @@ app.get("/edit/:id", async (req, res)=>{
 
 });
 
-app.post("/api/posts/:id", async (req, res)=>{
+router.post("/api/posts/:id", async (req, res)=>{
     try{
     const result= await axios.patch(API_URL+"/tasks/"+req.params.id, req.body);
     console.log(result.data);
@@ -90,7 +92,7 @@ app.post("/api/posts/:id", async (req, res)=>{
 });
 
 //add to db
-app.post("/api/posts", async (req, res)=>{
+router.post("/api/posts", async (req, res)=>{
     try{
     const result= await axios.post(API_URL+"/tasks", req.body);
     console.log(result.data);
@@ -101,6 +103,10 @@ app.post("/api/posts", async (req, res)=>{
     
 });
 
+app.use("/", router);
+
 app.listen(port, ()=>{
     console.log(`Client started at port: ${port}`);
-})
+});
+
+export const handler=serverless(app);
