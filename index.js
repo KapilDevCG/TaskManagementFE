@@ -18,7 +18,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 
 //initial content
-router.get("/", async (req, res)=>{
+app.get("/", async (req, res)=>{
     try{
     const result = await axios.get(API_URL);
     res.render("index.ejs", {
@@ -32,7 +32,7 @@ router.get("/", async (req, res)=>{
 });
 
 //Get by id
-router.get("/api/posts/complete/:id", async (req,res)=>{
+app.get("/api/posts/complete/:id", async (req,res)=>{
     const newBody={completed: true};
     try{
     const result= await axios.patch(API_URL+"/tasks/"+req.params.id, newBody);
@@ -46,12 +46,12 @@ router.get("/api/posts/complete/:id", async (req,res)=>{
 });
 
 //Add Page
-router.get("/new", (req, res) => {
+app.get("/new", (req, res) => {
     res.render("modify.ejs", { heading: "New Task", submit: "Create Task" });
   });
 
   //Delete
-router.get("/api/posts/delete/:id", async (req, res)=>{
+app.get("/api/posts/delete/:id", async (req, res)=>{
     try{
     const result= await axios.delete(API_URL+"/tasks/"+req.params.id);
     console.log(result.data);
@@ -62,7 +62,7 @@ router.get("/api/posts/delete/:id", async (req, res)=>{
 });
 
 //update using patch
-router.get("/edit/:id", async (req, res)=>{
+app.get("/edit/:id", async (req, res)=>{
 
     try{
     const result= await axios.get(API_URL+"/tasks/"+req.params.id);
@@ -80,7 +80,7 @@ router.get("/edit/:id", async (req, res)=>{
 
 });
 
-router.post("/api/posts/:id", async (req, res)=>{
+app.post("/api/posts/:id", async (req, res)=>{
     try{
     const result= await axios.patch(API_URL+"/tasks/"+req.params.id, req.body);
     console.log(result.data);
@@ -92,7 +92,7 @@ router.post("/api/posts/:id", async (req, res)=>{
 });
 
 //add to db
-router.post("/api/posts", async (req, res)=>{
+app.post("/api/posts", async (req, res)=>{
     try{
     const result= await axios.post(API_URL+"/tasks", req.body);
     console.log(result.data);
@@ -103,10 +103,10 @@ router.post("/api/posts", async (req, res)=>{
     
 });
 
-app.use("/", router);
+//app.use("/", router);
 
 app.listen(port, ()=>{
     console.log(`Client started at port: ${port}`);
 });
 
-export const handler=serverless(app);
+export default app;
